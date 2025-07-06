@@ -60,7 +60,7 @@ const ChatAssistant = () => {
 
   // Check if API key is stored in localStorage
   useEffect(() => {
-    const storedApiKey = localStorage.getItem('gemini-api-key');
+    const storedApiKey = "AIzaSyA1TaoY4-P39AVz3fBpg313LPg3QORhIXk";
     if (storedApiKey) {
       setApiKey(storedApiKey);
       setShowApiKeyInput(false);
