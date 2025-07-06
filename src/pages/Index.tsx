@@ -15,13 +15,20 @@ import {
   Shield,
   Sparkles,
   Coffee,
-  Target
+  Target,
+  LogOut,
+  User
 } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import LoginForm from "@/components/auth/LoginForm";
+import RegisterForm from "@/components/auth/RegisterForm";
 import ChatAssistant from "@/components/ChatAssistant";
 import AnnouncementBoard from "@/components/AnnouncementBoard";
 import QuickActions from "@/components/QuickActions";
 import MentalHealthSupport from "@/components/MentalHealthSupport";
 import ReportingSystem from "@/components/ReportingSystem";
+import CommunityPosts from "@/components/community/CommunityPosts";
+import AdminDashboard from "@/components/admin/AdminDashboard";
 
 interface Announcement {
   id: number;
@@ -33,7 +40,9 @@ interface Announcement {
 }
 
 const Index = () => {
+  const { user, logout, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [showLogin, setShowLogin] = useState(true);
 
   // Mock data for announcements with correct priority types
   const announcements: Announcement[] = [
@@ -63,6 +72,36 @@ const Index = () => {
     }
   ];
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show authentication forms if user is not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
+        {showLogin ? (
+          <LoginForm 
+            onSuccess={() => {}} 
+            onSwitchToRegister={() => setShowLogin(false)} 
+          />
+        ) : (
+          <RegisterForm 
+            onSuccess={() => {}} 
+            onSwitchToLogin={() => setShowLogin(true)} 
+          />
+        )}
+      </div>
+    );
+  }
+
   const stats = [
     { label: "Active Students", value: "2,450", icon: Users, color: "text-blue-600" },
     { label: "Today's Classes", value: "28", icon: Calendar, color: "text-green-600" },
@@ -82,6 +121,10 @@ const Index = () => {
         return <MentalHealthSupport />;
       case "report":
         return <ReportingSystem />;
+      case "community":
+        return <CommunityPosts />;
+      case "admin":
+        return user.role === 'admin' ? <AdminDashboard /> : <div>Access Denied</div>;
       default:
         return (
           <div className="space-y-6">
@@ -90,13 +133,17 @@ const Index = () => {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
               <CardHeader className="relative z-10">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 bg-white/20 rounded-full">
-                    <GraduationCap className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl mb-1">Welcome to MIT Campus Network</CardTitle>
-                    <p className="text-blue-100">Your digital companion for campus life at Muzaffarpur Institute of Technology</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="p-3 bg-white/20 rounded-full">
+                      <GraduationCap className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl mb-1">Welcome back, {user.name}!</CardTitle>
+                      <p className="text-blue-100">
+                        {user.branch?.toUpperCase()} • Semester {user.semester} • MIT Muzaffarpur
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -220,6 +267,17 @@ const Index = () => {
     }
   };
 
+  const navigationTabs = [
+    { id: "dashboard", label: "Dashboard", icon: TrendingUp },
+    { id: "community", label: "Community", icon: Users },
+    { id: "chat", label: "AI Assistant", icon: MessageCircle },
+    { id: "announcements", label: "Updates", icon: Bell },
+    { id: "actions", label: "Quick Actions", icon: Target },
+    { id: "support", label: "Support", icon: Heart },
+    { id: "report", label: "Report", icon: Shield },
+    ...(user.role === 'admin' ? [{ id: "admin", label: "Admin", icon: Shield }] : [])
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Navigation */}
@@ -237,14 +295,7 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-1">
-              {[
-                { id: "dashboard", label: "Dashboard", icon: TrendingUp },
-                { id: "chat", label: "AI Assistant", icon: MessageCircle },
-                { id: "announcements", label: "Updates", icon: Bell },
-                { id: "actions", label: "Quick Actions", icon: Target },
-                { id: "support", label: "Support", icon: Heart },
-                { id: "report", label: "Report", icon: Shield }
-              ].map((tab) => (
+              {navigationTabs.map((tab) => (
                 <Button
                   key={tab.id}
                   variant={activeTab === tab.id ? "default" : "ghost"}
@@ -260,6 +311,21 @@ const Index = () => {
                   <span className="hidden sm:inline">{tab.label}</span>
                 </Button>
               ))}
+              
+              <div className="ml-4 flex items-center space-x-2">
+                <Button variant="ghost" size="sm" className="text-gray-600">
+                  <User className="w-4 h-4 mr-1" />
+                  {user.name}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={logout}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
