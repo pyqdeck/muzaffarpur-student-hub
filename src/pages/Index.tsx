@@ -1,21 +1,21 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { 
+  GraduationCap, 
+  Users, 
   Bell, 
-  MessageCircle, 
   Calendar, 
-  MapPin, 
-  Heart, 
-  AlertTriangle,
   BookOpen,
-  Users,
-  Clock,
-  Star
+  MessageCircle,
+  TrendingUp,
+  Heart,
+  Shield,
+  Sparkles,
+  Coffee,
+  Target
 } from "lucide-react";
 import ChatAssistant from "@/components/ChatAssistant";
 import AnnouncementBoard from "@/components/AnnouncementBoard";
@@ -23,208 +23,252 @@ import QuickActions from "@/components/QuickActions";
 import MentalHealthSupport from "@/components/MentalHealthSupport";
 import ReportingSystem from "@/components/ReportingSystem";
 
+interface Announcement {
+  id: number;
+  title: string;
+  content: string;
+  priority: "high" | "medium" | "low";
+  timestamp: string;
+  department: string;
+}
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
 
-  const quickStats = [
-    { icon: Calendar, label: "Today's Classes", value: "4", color: "text-blue-600" },
-    { icon: Bell, label: "New Notifications", value: unreadNotifications.toString(), color: "text-orange-600" },
-    { icon: Users, label: "Club Events", value: "2", color: "text-green-600" },
-    { icon: Clock, label: "Next Class", value: "2:30 PM", color: "text-purple-600" }
-  ];
-
-  const recentAnnouncements = [
+  // Mock data for announcements with correct priority types
+  const announcements: Announcement[] = [
     {
       id: 1,
-      title: "Mid-term Exam Schedule Released",
-      content: "Check your dashboard for updated exam timetables",
-      priority: "high",
+      title: "Mid-Semester Exam Schedule Released",
+      content: "The examination schedule for mid-semester tests has been published. Check your department notice board for detailed timings.",
+      priority: "high" as const,
       timestamp: "2 hours ago",
       department: "Academic Office"
     },
     {
       id: 2,
-      title: "Library Extended Hours",
-      content: "Library will remain open until 10 PM during exam week",
-      priority: "medium",
+      title: "Cultural Fest 2024 - Technovanza",
+      content: "Get ready for the biggest cultural celebration of the year! Registration opens next week.",
+      priority: "medium" as const,
       timestamp: "5 hours ago",
-      department: "Library"
+      department: "Student Affairs"
     },
     {
       id: 3,
-      title: "Technical Fest Registration Open",
-      content: "Register for TechnoMIT 2024 - Bihar's largest tech fest",
-      priority: "low",
+      title: "Library Hours Extended",
+      content: "The central library will now remain open until 10 PM during exam weeks.",
+      priority: "low" as const,
       timestamp: "1 day ago",
-      department: "Student Activities"
+      department: "Library"
     }
   ];
 
-  const todaySchedule = [
-    { time: "9:00 AM", subject: "Data Structures", room: "CS-201", type: "Lecture" },
-    { time: "11:00 AM", subject: "Digital Electronics", room: "EE-105", type: "Lab" },
-    { time: "2:30 PM", subject: "Engineering Mathematics", room: "GH-301", type: "Tutorial" },
-    { time: "4:00 PM", subject: "Programming Lab", room: "CS-Lab-2", type: "Practical" }
+  const stats = [
+    { label: "Active Students", value: "2,450", icon: Users, color: "text-blue-600" },
+    { label: "Today's Classes", value: "28", icon: Calendar, color: "text-green-600" },
+    { label: "Announcements", value: "12", icon: Bell, color: "text-orange-600" },
+    { label: "Resources", value: "156", icon: BookOpen, color: "text-purple-600" }
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-green-600 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Campus Companion</h1>
-                <p className="text-sm text-gray-600">MIT Muzaffarpur</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-                {unreadNotifications > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs flex items-center justify-center">
-                    {unreadNotifications}
-                  </Badge>
-                )}
-              </Button>
-              <Avatar>
-                <AvatarFallback className="bg-blue-100 text-blue-600">ST</AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex space-x-1 bg-white/60 backdrop-blur-sm rounded-lg p-1 mb-6">
-          {[
-            { id: "dashboard", label: "Dashboard", icon: Calendar },
-            { id: "chat", label: "AI Assistant", icon: MessageCircle },
-            { id: "announcements", label: "Announcements", icon: Bell },
-            { id: "support", label: "Support", icon: Heart },
-            { id: "report", label: "Report", icon: AlertTriangle }
-          ].map((tab) => (
-            <Button
-              key={tab.id}
-              variant={activeTab === tab.id ? "default" : "ghost"}
-              className={`flex items-center space-x-2 ${
-                activeTab === tab.id 
-                  ? "bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg" 
-                  : ""
-              }`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <tab.icon className="w-4 h-4" />
-              <span>{tab.label}</span>
-            </Button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        {activeTab === "dashboard" && (
+  const renderContent = () => {
+    switch (activeTab) {
+      case "chat":
+        return <ChatAssistant />;
+      case "announcements":
+        return <AnnouncementBoard announcements={announcements} />;
+      case "actions":
+        return <QuickActions />;
+      case "support":
+        return <MentalHealthSupport />;
+      case "report":
+        return <ReportingSystem />;
+      default:
+        return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickStats.map((stat, index) => (
+            {/* Welcome Section */}
+            <Card className="bg-gradient-to-r from-blue-600 to-green-600 text-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+              <CardHeader className="relative z-10">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-white/20 rounded-full">
+                    <GraduationCap className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl mb-1">Welcome to MIT Campus Network</CardTitle>
+                    <p className="text-blue-100">Your digital companion for campus life at Muzaffarpur Institute of Technology</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Smart Campus
+                  </Badge>
+                  <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+                    <Shield className="w-3 h-3 mr-1" />
+                    Safe & Secure
+                  </Badge>
+                  <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+                    <Heart className="w-3 h-3 mr-1" />
+                    Student First
+                  </Badge>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {stats.map((stat, index) => (
                 <Card key={index} className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                        <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                        <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                        <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                       </div>
-                      <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                      <div className={`p-3 rounded-full bg-gray-50 ${stat.color}`}>
+                        <stat.icon className="w-6 h-6" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Today's Schedule */}
-              <Card className="lg:col-span-2 bg-white/80 backdrop-blur-sm">
+            {/* Quick Highlights */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Calendar className="w-5 h-5 text-blue-600" />
-                    <span>Today's Schedule</span>
+                  <CardTitle className="flex items-center space-x-2 text-lg">
+                    <TrendingUp className="w-5 h-5 text-green-600" />
+                    <span>Recent Activity</span>
                   </CardTitle>
-                  <CardDescription>Your classes and activities for today</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {todaySchedule.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                        <div className="flex items-center space-x-3">
-                          <div className="text-sm font-medium text-blue-600 min-w-[70px]">
-                            {item.time}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{item.subject}</p>
-                            <p className="text-sm text-gray-600 flex items-center">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              {item.room}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          {item.type}
-                        </Badge>
+                    <div className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                      <MessageCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">New discussion in CS Community</p>
+                        <p className="text-xs text-gray-600">Machine Learning study group forming</p>
                       </div>
-                    ))}
+                    </div>
+                    <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                      <Target className="w-5 h-5 text-green-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Internship opportunity posted</p>
+                        <p className="text-xs text-gray-600">Software Development role at local startup</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
+                      <Coffee className="w-5 h-5 text-orange-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Campus event reminder</p>
+                        <p className="text-xs text-gray-600">Tech talk tomorrow at 2 PM</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Recent Announcements */}
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Bell className="w-5 h-5 text-orange-600" />
-                    <span>Recent Updates</span>
-                  </CardTitle>
+                  <CardTitle className="text-lg">Getting Started</CardTitle>
+                  <p className="text-gray-600 text-sm">Explore what our campus network has to offer</p>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {recentAnnouncements.slice(0, 3).map((announcement) => (
-                      <div key={announcement.id} className="p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-medium text-sm text-gray-900 line-clamp-2">
-                            {announcement.title}
-                          </h4>
-                          <Badge 
-                            variant={announcement.priority === "high" ? "destructive" : 
-                                   announcement.priority === "medium" ? "default" : "secondary"}
-                            className="text-xs ml-2"
-                          >
-                            {announcement.priority}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-gray-600 mb-1">{announcement.content}</p>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-blue-600">{announcement.department}</span>
-                          <span className="text-xs text-gray-500">{announcement.timestamp}</span>
-                        </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start h-auto p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 hover:from-blue-100 hover:to-cyan-100"
+                      onClick={() => setActiveTab("chat")}
+                    >
+                      <MessageCircle className="w-5 h-5 text-blue-600 mr-3" />
+                      <div className="text-left">
+                        <p className="font-medium text-gray-900">Chat with AI Assistant</p>
+                        <p className="text-xs text-gray-600">Get instant help with academics and campus info</p>
                       </div>
-                    ))}
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start h-auto p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:from-green-100 hover:to-emerald-100"
+                      onClick={() => setActiveTab("announcements")}
+                    >
+                      <Bell className="w-5 h-5 text-green-600 mr-3" />
+                      <div className="text-left">
+                        <p className="font-medium text-gray-900">View Announcements</p>
+                        <p className="text-xs text-gray-600">Stay updated with latest campus news</p>
+                      </div>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start h-auto p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:from-purple-100 hover:to-pink-100"
+                      onClick={() => setActiveTab("support")}
+                    >
+                      <Heart className="w-5 h-5 text-purple-600 mr-3" />
+                      <div className="text-left">
+                        <p className="font-medium text-gray-900">Mental Health Support</p>
+                        <p className="text-xs text-gray-600">Access wellness resources and support</p>
+                      </div>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
-
-            <QuickActions />
           </div>
-        )}
+        );
+    }
+  };
 
-        {activeTab === "chat" && <ChatAssistant />}
-        {activeTab === "announcements" && <AnnouncementBoard announcements={recentAnnouncements} />}
-        {activeTab === "support" && <MentalHealthSupport />}
-        {activeTab === "report" && <ReportingSystem />}
-      </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-blue-600 to-green-600 rounded-lg">
+                <GraduationCap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">MIT Campus</h1>
+                <p className="text-xs text-gray-600">Muzaffarpur Institute of Technology</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-1">
+              {[
+                { id: "dashboard", label: "Dashboard", icon: TrendingUp },
+                { id: "chat", label: "AI Assistant", icon: MessageCircle },
+                { id: "announcements", label: "Updates", icon: Bell },
+                { id: "actions", label: "Quick Actions", icon: Target },
+                { id: "support", label: "Support", icon: Heart },
+                { id: "report", label: "Report", icon: Shield }
+              ].map((tab) => (
+                <Button
+                  key={tab.id}
+                  variant={activeTab === tab.id ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`h-8 px-3 ${
+                    activeTab === tab.id 
+                      ? "bg-gradient-to-r from-blue-600 to-green-600 text-white" 
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4 mr-1.5" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {renderContent()}
+      </main>
     </div>
   );
 };
