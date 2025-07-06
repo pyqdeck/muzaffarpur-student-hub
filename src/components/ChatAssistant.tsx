@@ -95,7 +95,7 @@ const ChatAssistant = () => {
   const generateGeminiResponse = async (userMessage: string): Promise<string> => {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemma-3-27b-it" });
 
       const prompt = `You are a helpful Campus Companion AI assistant for MIT Muzaffarpur (Muzaffarpur Institute of Technology) students. You should be knowledgeable, supportive, and provide practical guidance for college life.
 
