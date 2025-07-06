@@ -5,7 +5,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'student' | 'admin' | 'faculty';
+  role: 'student' | 'admin' | 'faculty' | 'guest';
   course: 'engineering' | 'other';
   branch?: 'computer_science' | 'electronics' | 'mechanical' | 'civil' | 'electrical';
   semester?: number;
@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (userData: Partial<User> & { password: string }) => Promise<boolean>;
   logout: () => void;
+  loginAsGuest: () => Promise<boolean>;
   updateProfile: (updates: Partial<User>) => Promise<boolean>;
   isLoading: boolean;
 }
@@ -122,8 +123,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('mit-user');
   };
 
+  const loginAsGuest = async (): Promise<boolean> => {
+    try {
+      const guestUser: User = {
+        id: 'guest-user',
+        email: 'guest@example.com',
+        name: 'Guest User',
+        role: 'guest',
+        course: 'other', // Or some default/generic course
+        profileComplete: true, // Guest profiles are considered complete
+      };
+      setUser(guestUser);
+      localStorage.setItem('mit-user', JSON.stringify(guestUser));
+      return true;
+    } catch (error) {
+      console.error('Guest login error:', error);
+      return false;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateProfile, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loginAsGuest, updateProfile, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
