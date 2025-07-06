@@ -290,7 +290,6 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">MIT Campus</h1>
-                <p className="text-xs text-gray-600">Muzaffarpur Institute of Technology</p>
               </div>
             </div>
             
