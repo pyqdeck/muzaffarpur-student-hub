@@ -18,7 +18,7 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }: LoginFormProps) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loginAsGuest } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +33,18 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }: LoginFormProps) => {
       setError('Invalid credentials or network error');
     }
     
+    setIsLoading(false);
+  };
+
+  const handleGuestLogin = async () => {
+    setIsLoading(true);
+    setError('');
+    const success = await loginAsGuest();
+    if (success) {
+      onSuccess();
+    } else {
+      setError('Guest login failed. Please try again.');
+    }
     setIsLoading(false);
   };
 
@@ -95,6 +107,17 @@ const LoginForm = ({ onSuccess, onSwitchToRegister }: LoginFormProps) => {
             {isLoading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
+
+        <div className="mt-4 text-center">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleGuestLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Loading...' : 'Continue as Guest'}
+          </Button>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
