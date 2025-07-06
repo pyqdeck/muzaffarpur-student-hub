@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,7 +59,7 @@ const ChatAssistant = () => {
 
   // Check if API key is stored in localStorage
   useEffect(() => {
-    const storedApiKey = "AIzaSyA1TaoY4-P39AVz3fBpg313LPg3QORhIXk";
+    const storedApiKey = localStorage.getItem('gemini-api-key');
     if (storedApiKey) {
       setApiKey(storedApiKey);
       setShowApiKeyInput(false);
@@ -95,7 +94,7 @@ const ChatAssistant = () => {
   const generateGeminiResponse = async (userMessage: string): Promise<string> => {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemma-3-27b-it" });
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
       const prompt = `You are a helpful Campus Companion AI assistant for MIT Muzaffarpur (Muzaffarpur Institute of Technology) students. You should be knowledgeable, supportive, and provide practical guidance for college life.
 
